@@ -4,9 +4,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
+	"github.com/gocolly/colly"
 	"github.com/urfave/cli"
-	"golang.org/x/net/html"
 )
 
 const (
@@ -14,6 +15,7 @@ const (
 )
 
 var (
+	ua       = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36"
 	cookie   string
 	credit   uint64
 	client   = &http.Client{}
@@ -47,14 +49,6 @@ func main() {
 			log.Fatal("Cookie is not provided")
 		}
 
-		header = http.Header{
-			"Accept":          {"application/json, text/javascript, */*; q=0.01"},
-			"Accept-Language": {"Accept-Language: en-US,en;q=0.9"},
-			"Accept-Encoding": {"gzip, deflate"},
-			"Cookie":          {cookie},
-			"User-Agent":      {"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36"},
-		}
-
 		fetchSections()
 
 		return nil
@@ -67,28 +61,40 @@ func main() {
 }
 
 func fetchSections() {
-	req, err := http.NewRequest("GET", target, nil)
+	c := colly.NewCollector()
 
-	if err != nil {
-		log.Panicln(err)
+	c.OnRequest(onRequest)
+	c.OnResponse(onResponse)
+	c.OnError(onError)
+
+	var href string
+
+	c.OnHTML("li.node > div.nodeInfo > div.nodeText > h3.nodeTitle > a[href]", func(e *colly.HTMLElement) {
+		href = e.Attr("href")
+		if strings.Contains(href, "forums/") {
+			sections = append(sections, href)
+		}
+	})
+
+	c.OnScraped(func(r *colly.Response) {
+		log.Println(sections)
+	})
+
+	c.Visit(target)
+}
+
+func onRequest(r *colly.Request) {
+	r.Headers.Set("User-Agent", ua)
+	r.Headers.Set("Accept", "application/json, text/javascript, */*; q=0.01")
+	r.Headers.Set("Cookie", cookie)
+}
+
+func onResponse(r *colly.Response) {
+	if r.StatusCode != 200 {
+		log.Panicln("Try a fresh token")
 	}
+}
 
-	resp, err := client.Do(req)
-
-	if err != nil {
-		log.Panicln(err)
-	}
-
-	root, err := html.Parse(resp.Body)
-
-	if err != nil {
-		log.Panicln(err)
-	}
-
-	if resp.StatusCode != 200 {
-		log.Panicln("Try entering a fresh cookie")
-	}
-
-	log.Println("UH?")
-
+func onError(r *colly.Response, e error) {
+	log.Println("Errored", e)
 }
