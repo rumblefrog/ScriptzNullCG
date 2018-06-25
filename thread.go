@@ -8,13 +8,13 @@ import (
 
 // Thread ...
 type Thread struct {
-	Name       string
-	Href       string
-	ReplyCount uint64
-	Views      uint64
-	Page       uint64
-	Pages      uint64
-	Replies    []*Reply
+	Name       string   `json:"name"`
+	Href       string   `json:"href"`
+	ReplyCount uint64   `json:"replycount"`
+	Views      uint64   `json:"views"`
+	Page       uint64   `json:"page"`
+	Pages      uint64   `json:"pages"`
+	Replies    []*Reply `json:"replies"`
 }
 
 func fetchThreads(s *Section) {

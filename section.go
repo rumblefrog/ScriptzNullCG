@@ -9,13 +9,13 @@ import (
 
 // Section ...
 type Section struct {
-	Name         string
-	Href         string
-	Page         uint64
-	Pages        uint64
-	Threads      []*Thread
-	ThreadCount  uint64
-	MessageCount uint64
+	Name         string    `json:"name"`
+	Href         string    `json:"href"`
+	Page         uint64    `json:"page"`
+	Pages        uint64    `json:"pages"`
+	Threads      []*Thread `json:"threads"`
+	ThreadCount  uint64    `json:"threadcount"`
+	MessageCount uint64    `json:"messagecount"`
 }
 
 var (

@@ -4,12 +4,12 @@ import "github.com/gocolly/colly"
 
 // Reply ...
 type Reply struct {
-	Author string
-	Liked  bool
-	Date   string
+	Author string `json:"author"`
+	Liked  bool   `json:"liked"`
+	Date   string `json:"date"`
 }
 
-func fetchReply(s *Section, t *Thread, p int) {
+func fetchReply(s *Section, t *Thread) {
 	ReplyCollector.OnRequest(onRequest)
 	ReplyCollector.OnError(onError)
 
