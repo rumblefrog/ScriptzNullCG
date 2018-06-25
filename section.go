@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"math"
 	"strconv"
 
@@ -49,9 +48,7 @@ func fetchSections() {
 	})
 
 	SectionCollector.OnScraped(func(r *colly.Response) {
-		for _, s := range sections {
-			log.Printf("Name: %s | Directive: %s | Threads: %d | Replies: %d", s.Name, s.Href, s.ThreadCount, s.MessageCount)
-		}
+		fetchThreads(sections[0])
 	})
 
 	SectionCollector.Visit(formatTarget(nil, nil))
