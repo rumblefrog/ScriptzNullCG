@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
+	"strconv"
 
 	"github.com/gocolly/colly"
 	"github.com/urfave/cli"
@@ -19,9 +19,17 @@ var (
 	cookie   string
 	credit   uint64
 	client   = &http.Client{}
-	sections []string
+	sections []*Section
 	header   http.Header
 )
+
+// Section ...
+type Section struct {
+	Name         string
+	Href         string
+	ThreadCount  uint64
+	MessageCount uint64
+}
 
 // History ..
 type History struct {
@@ -64,20 +72,35 @@ func fetchSections() {
 	c := colly.NewCollector()
 
 	c.OnRequest(onRequest)
-	c.OnResponse(onResponse)
 	c.OnError(onError)
 
-	var href string
+	var (
+		tc  uint64
+		mc  uint64
+		err error
+	)
 
-	c.OnHTML("li.node > div.nodeInfo > div.nodeText > h3.nodeTitle > a[href]", func(e *colly.HTMLElement) {
-		href = e.Attr("href")
-		if strings.Contains(href, "forums/") {
-			sections = append(sections, href)
+	c.OnHTML("li.node > div.nodeInfo > div.nodeText", func(e *colly.HTMLElement) {
+		if tc, err = strconv.ParseUint(e.ChildText("div.nodeStats > dl:first-child > dd"), 10, 64); err != nil {
+			return
 		}
+
+		if mc, err = strconv.ParseUint(e.ChildText("div.nodeStats > dl:last-child > dd"), 10, 64); err != nil {
+			return
+		}
+
+		sections = append(sections, &Section{
+			Name:         e.ChildText("h3.nodeTitle > a[href]"),
+			Href:         e.ChildAttr("h3.nodeTitle > a[href]", "href"),
+			ThreadCount:  tc,
+			MessageCount: mc,
+		})
 	})
 
 	c.OnScraped(func(r *colly.Response) {
-		log.Println(sections)
+		for _, s := range sections {
+			log.Printf("Name: %s | Directive: %s | Threads: %d | Replies: %d", s.Name, s.Href, s.ThreadCount, s.MessageCount)
+		}
 	})
 
 	c.Visit(target)
@@ -89,12 +112,6 @@ func onRequest(r *colly.Request) {
 	r.Headers.Set("Cookie", cookie)
 }
 
-func onResponse(r *colly.Response) {
-	if r.StatusCode != 200 {
-		log.Panicln("Try a fresh token")
-	}
-}
-
 func onError(r *colly.Response, e error) {
-	log.Println("Errored", e)
+	log.Println("Try a fresh token perhaps?: ", e)
 }
