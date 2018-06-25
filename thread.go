@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/gocolly/colly"
@@ -14,16 +13,18 @@ type Thread struct {
 	ReplyCount uint64
 	Views      uint64
 	Page       uint64
+	Pages      uint64
 	Replies    []*Reply
 }
 
-func fetchThreads(s *Section, p int) {
+func fetchThreads(s *Section) {
 	ThreadCollector.OnRequest(onRequest)
 	ThreadCollector.OnError(onError)
 
 	var (
 		r   uint64
 		v   uint64
+		ps  uint64
 		err error
 	)
 
@@ -36,13 +37,19 @@ func fetchThreads(s *Section, p int) {
 			return
 		}
 
+		if ps, err = strconv.ParseUint(e.ChildText("div.main > div.titleText > div.secondRow > span.itemPageNav > a[href]:last-child"), 10, 64); err != nil {
+			return
+		}
+
 		s.Threads = append(s.Threads, &Thread{
 			Name:       e.ChildText("div.main > div.titleText > h3.title > a[href].PreviewToolTip"),
 			Href:       e.ChildAttr("div.main > div.titleText > h3.title > a[href].PreviewToolTip", "href"),
 			ReplyCount: r,
 			Views:      v,
+			Page:       1,
+			Pages:      ps,
 		})
 	})
 
-	ThreadCollector.Visit(fmt.Sprintf("%s/%spage-%d", target, s.Href, p))
+	ThreadCollector.Visit(formatTarget(s, nil))
 }

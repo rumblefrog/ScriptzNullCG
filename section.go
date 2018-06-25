@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"math"
 	"strconv"
 
 	"github.com/gocolly/colly"
@@ -11,6 +12,8 @@ import (
 type Section struct {
 	Name         string
 	Href         string
+	Page         uint64
+	Pages        uint64
 	Threads      []*Thread
 	ThreadCount  uint64
 	MessageCount uint64
@@ -38,6 +41,8 @@ func fetchSections() {
 		sections = append(sections, &Section{
 			Name:         e.ChildText("h3.nodeTitle > a[href]"),
 			Href:         e.ChildAttr("h3.nodeTitle > a[href]", "href"),
+			Page:         1,
+			Pages:        uint64(math.Ceil(float64(tc) / float64(20))),
 			ThreadCount:  tc,
 			MessageCount: mc,
 		})
@@ -49,5 +54,5 @@ func fetchSections() {
 		}
 	})
 
-	SectionCollector.Visit(target)
+	SectionCollector.Visit(formatTarget(nil, nil))
 }
