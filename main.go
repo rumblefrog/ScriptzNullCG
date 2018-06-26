@@ -47,7 +47,14 @@ func main() {
 			log.Fatal("Cookie is not provided")
 		}
 
-		fetchSections()
+		//fetchSections()
+		loadCache()
+
+		Cache = append(Cache, &Thread{
+			Name: "test",
+		})
+
+		saveCache()
 
 		return nil
 	}
@@ -65,5 +72,5 @@ func onRequest(r *colly.Request) {
 }
 
 func onError(r *colly.Response, e error) {
-	log.Println("Try a fresh token perhaps?: ", e)
+	log.Fatal("Try a fresh token perhaps?: ", e)
 }
