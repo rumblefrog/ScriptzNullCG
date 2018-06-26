@@ -17,6 +17,10 @@ func isInCache(t *Thread) bool {
 	return false
 }
 
+func addToCache(t *Thread) {
+	Cache = append(Cache, t)
+}
+
 func loadCache() {
 	file, err := os.OpenFile("cache.json", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
 
