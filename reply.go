@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"strings"
 
 	"github.com/gocolly/colly"
 )
@@ -11,7 +10,6 @@ import (
 type Reply struct {
 	Author   string `json:"author"`
 	Content  string `json:"content"`
-	Liked    bool   `json:"liked"`
 	LikeHref string `json:"likehref"`
 	Date     string `json:"date"`
 }
@@ -26,20 +24,15 @@ func fetchReply(s *Section, t *Thread) {
 	ReplyCollector.OnRequest(onRequest)
 	ReplyCollector.OnError(onError)
 
-	var l bool
-
 	ReplyCollector.OnHTML("li.message[data-author]", func(e *colly.HTMLElement) {
 
-		if len(e.ChildText("span.LikeLabel")) > 0 {
-			l = strings.Contains(e.ChildText("span.LikeLabel"), "Unlike")
-		} else {
-			l = true
+		if len(e.ChildText("a[href].like > span.LikeLabel")) <= 0 {
+			return
 		}
 
 		t.Replies = append(t.Replies, &Reply{
 			Author:   e.Attr("data-author"),
 			Content:  e.ChildText("article > blockquote.messageText"),
-			Liked:    l,
 			LikeHref: e.ChildAttr("a[href].LikeLinkHide", "href"),
 			Date:     e.ChildText("a[href].datePermalink > span.DateTime"),
 		})

@@ -26,7 +26,7 @@ func process(s *Section, t *Thread) {
 	}
 
 	for ; index < len(t.Replies); index++ {
-		if t.Replies[index].Liked == false && len(t.Replies[index].Content) > 20 && CreatePayload(t, t.Replies[index]) {
+		if len(t.Replies[index].Content) > 20 && CreatePayload(t, t.Replies[index]) {
 			if Credit <= 0 {
 				saveCache()
 

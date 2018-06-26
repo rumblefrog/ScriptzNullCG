@@ -14,7 +14,7 @@ var Client = &http.Client{
 
 // CreatePayload - Constructs payload for POST form query
 func CreatePayload(t *Thread, r *Reply) bool {
-	if r.Liked || len(r.Content) <= 20 || len(t.XFToken) == 0 {
+	if len(r.Content) <= 20 || len(t.XFToken) == 0 {
 		return false
 	}
 
