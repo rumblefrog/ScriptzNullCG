@@ -1,6 +1,10 @@
 package main
 
-import "github.com/gocolly/colly"
+import (
+	"log"
+
+	"github.com/gocolly/colly"
+)
 
 // Reply ...
 type Reply struct {
@@ -15,6 +19,7 @@ func fetchReply(s *Section, t *Thread) {
 		process(s, t)
 	}
 
+	ReplyCollector.SetRequestTimeout(30000000000)
 	ReplyCollector.OnRequest(onRequest)
 	ReplyCollector.OnError(onError)
 
@@ -29,6 +34,8 @@ func fetchReply(s *Section, t *Thread) {
 	ReplyCollector.OnScraped(func(r *colly.Response) {
 		process(s, t)
 	})
+
+	log.Println("ReplyCollector: " + formatTarget(s, t))
 
 	ReplyCollector.Visit(formatTarget(s, t))
 }

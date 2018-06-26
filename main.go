@@ -46,8 +46,8 @@ func main() {
 
 		Tracker = make(map[*Thread]int)
 
-		//fetchSections()
 		loadCache()
+		fetchSections()
 
 		Cache = append(Cache, &Thread{
 			Name: "test",
@@ -72,4 +72,8 @@ func onRequest(r *colly.Request) {
 
 func onError(r *colly.Response, e error) {
 	log.Fatal("Try a fresh token perhaps?: ", e)
+}
+
+func onResponse(r *colly.Response) {
+	log.Println(r.Body)
 }

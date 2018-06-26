@@ -25,6 +25,7 @@ var (
 )
 
 func fetchSections() {
+	SectionCollector.SetRequestTimeout(30000000000)
 	SectionCollector.OnRequest(onRequest)
 	SectionCollector.OnError(onError)
 

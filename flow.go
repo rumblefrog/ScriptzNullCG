@@ -27,6 +27,7 @@ func process(s *Section, t *Thread) {
 	for ; index < len(t.Replies); index++ {
 		//Send off to payload generator
 		if credit <= 0 {
+			saveCache()
 
 			byteValues, _ := json.Marshal(&Sections)
 
@@ -41,7 +42,7 @@ func process(s *Section, t *Thread) {
 
 	if t.Page >= t.Pages {
 		addToCache(t)
-		if ThreadIndex < len(s.Threads) {
+		if ThreadIndex+1 < len(s.Threads) {
 			ThreadIndex++
 			fetchReply(s, s.Threads[ThreadIndex])
 		} else {
