@@ -26,21 +26,22 @@ func process(s *Section, t *Thread) {
 	}
 
 	for ; index < len(t.Replies); index++ {
-		//Send off to payload generator
-		if Credit <= 0 {
-			saveCache()
+		if !t.Replies[index].Liked && CreatePayload(t, t.Replies[index]) {
+			if Credit <= 0 {
+				saveCache()
 
-			byteValues, _ := json.Marshal(&Sections)
+				byteValues, _ := json.Marshal(&Sections)
 
-			ioutil.WriteFile("forum.json", byteValues, 0777)
+				ioutil.WriteFile("forum.json", byteValues, 0777)
 
-			Progress.FinishPrint(fmt.Sprintf("Processed %d credits", TotalProcessed))
+				Progress.FinishPrint(fmt.Sprintf("Processed %d credits", TotalProcessed))
 
-			os.Exit(0)
+				os.Exit(0)
+			}
+			Credit -= 3
+			TotalProcessed += 3
+			Progress.Add(3)
 		}
-		Credit -= 3
-		TotalProcessed += 3
-		Progress.Add(3)
 	}
 
 	Tracker[t] = index

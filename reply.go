@@ -8,9 +8,10 @@ import (
 
 // Reply ...
 type Reply struct {
-	Author string `json:"author"`
-	Liked  bool   `json:"liked"`
-	Date   string `json:"date"`
+	Author   string `json:"author"`
+	Liked    bool   `json:"liked"`
+	LikeHref string `json:"likehref"`
+	Date     string `json:"date"`
 }
 
 func fetchReply(s *Section, t *Thread) {
@@ -25,9 +26,10 @@ func fetchReply(s *Section, t *Thread) {
 
 	ReplyCollector.OnHTML("li.message[data-author]", func(e *colly.HTMLElement) {
 		t.Replies = append(t.Replies, &Reply{
-			Author: e.Attr("data-author"),
-			Liked:  e.ChildText("span.LikeLabel") == "Unlike",
-			Date:   e.ChildText("a[href].datePermalink > span.DateTime"),
+			Author:   e.Attr("data-author"),
+			Liked:    e.ChildText("span.LikeLabel") == "Unlike",
+			LikeHref: e.ChildAttr("a[href].LikeLinkHide", "href"),
+			Date:     e.ChildText("a[href].datePermalink > span.DateTime"),
 		})
 	})
 
