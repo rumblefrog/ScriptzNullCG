@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"log"
 )
 
@@ -25,6 +27,11 @@ func process(s *Section, t *Thread) {
 	for ; index < len(t.Replies); index++ {
 		//Send off to payload generator
 		if credit <= 0 {
+
+			byteValues, _ := json.Marshal(&Sections)
+
+			ioutil.WriteFile("forum.json", byteValues, 0777)
+
 			log.Fatal("Process Complete")
 		}
 		credit -= 3

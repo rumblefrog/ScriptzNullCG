@@ -24,12 +24,6 @@ var (
 	ReplyCollector   = colly.NewCollector()
 )
 
-// History ..
-type History struct {
-	Threads []string
-	PostIDs []uint32
-}
-
 func main() {
 	app := cli.NewApp()
 
