@@ -31,6 +31,10 @@ func fetchReply(s *Section, t *Thread) {
 		})
 	})
 
+	ReplyCollector.OnHTML("input[type=_xfToken]", func(e *colly.HTMLElement) {
+		t.XFToken = e.Attr("value")
+	})
+
 	ReplyCollector.OnScraped(func(r *colly.Response) {
 		process(s, t)
 	})

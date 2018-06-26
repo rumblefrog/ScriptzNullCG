@@ -7,17 +7,26 @@ import (
 
 	"github.com/gocolly/colly"
 	"github.com/urfave/cli"
+	"gopkg.in/cheggaaa/pb.v1"
 )
 
-// Sections
-// SectionCollector - Forum Categories Collector
-// ThreadCollector - Threads Collector
-// ReplyCollector - Reply Collector
+// UA - Useragent to use for request
+// Cookie - Authentication payload
+// Credit - Amount of credit to process
+// TotalProcessed - Total amount processed
+// Progress - Pointer to progress bar
+// Header - HTTP request header
+// Sections - Forum categories
+// SectionCollector - Forum categories collector
+// ThreadCollector - Threads collector
+// ReplyCollector - Reply collector
 var (
-	ua               = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36"
-	cookie           string
-	credit           uint64
-	client           = &http.Client{}
+	UA               = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36"
+	Cookie           string
+	Credit           int
+	TotalProcessed   uint64
+	Progress         *pb.ProgressBar
+	Headers          http.Header
 	Sections         []*Section
 	SectionCollector = colly.NewCollector()
 	ThreadCollector  = colly.NewCollector()
@@ -31,20 +40,28 @@ func main() {
 	app.Usage = "ScriptzNull Credit Generator"
 
 	app.Flags = []cli.Flag{
-		cli.Uint64Flag{
+		cli.IntFlag{
 			Name:        "c",
 			Value:       100,
 			Usage:       "Desired amount of credits",
-			Destination: &credit,
+			Destination: &Credit,
 		},
 	}
 
 	app.Action = func(c *cli.Context) error {
-		if cookie = c.Args().Get(0); cookie == "" {
+		if Cookie = c.Args().Get(0); Cookie == "" {
 			log.Fatal("Cookie is not provided")
 		}
 
+		Progress = pb.StartNew(Credit)
+
 		Tracker = make(map[*Thread]int)
+
+		Headers = http.Header{
+			"User-Agent": {UA},
+			"Accept":     {"application/json, text/javascript, */*; q=0.01"},
+			"Cookie":     {Cookie},
+		}
 
 		loadCache()
 		fetchSections()
@@ -65,9 +82,9 @@ func main() {
 }
 
 func onRequest(r *colly.Request) {
-	r.Headers.Set("User-Agent", ua)
+	r.Headers.Set("User-Agent", UA)
 	r.Headers.Set("Accept", "application/json, text/javascript, */*; q=0.01")
-	r.Headers.Set("Cookie", cookie)
+	r.Headers.Set("Cookie", Cookie)
 }
 
 func onError(r *colly.Response, e error) {

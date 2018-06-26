@@ -17,7 +17,7 @@ type Thread struct {
 	Page       uint64   `json:"page"`
 	Pages      uint64   `json:"pages"`
 	Replies    []*Reply `json:"replies"`
-	XFToken    string   `json:"xftoken"` //TODO: IMPLEMENT
+	XFToken    string   `json:"xftoken"`
 }
 
 func fetchThreads(s *Section) {

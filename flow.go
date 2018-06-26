@@ -2,8 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
-	"log"
+	"os"
 )
 
 // SectionIndex - Per Page of Threads Indexing
@@ -26,16 +27,20 @@ func process(s *Section, t *Thread) {
 
 	for ; index < len(t.Replies); index++ {
 		//Send off to payload generator
-		if credit <= 0 {
+		if Credit <= 0 {
 			saveCache()
 
 			byteValues, _ := json.Marshal(&Sections)
 
 			ioutil.WriteFile("forum.json", byteValues, 0777)
 
-			log.Fatal("Process Complete")
+			Progress.FinishPrint(fmt.Sprintf("Processed %d credits", TotalProcessed))
+
+			os.Exit(0)
 		}
-		credit -= 3
+		Credit -= 3
+		TotalProcessed += 3
+		Progress.Add(3)
 	}
 
 	Tracker[t] = index
