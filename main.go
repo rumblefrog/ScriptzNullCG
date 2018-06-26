@@ -21,7 +21,7 @@ import (
 // ThreadCollector - Threads collector
 // ReplyCollector - Reply collector
 var (
-	UA               = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36"
+	UA               = ""
 	Cookie           string
 	Credit           int
 	TotalProcessed   uint64
@@ -46,11 +46,27 @@ func main() {
 			Usage:       "Desired amount of credits",
 			Destination: &Credit,
 		},
+		cli.StringFlag{
+			Name:        "auth",
+			Value:       "",
+			Usage:       "The authentication cookie header",
+			Destination: &Cookie,
+		},
+		cli.StringFlag{
+			Name:        "ua",
+			Value:       "",
+			Usage:       "The user-agent you authenticated with",
+			Destination: &UA,
+		},
 	}
 
 	app.Action = func(c *cli.Context) error {
-		if Cookie = c.Args().Get(0); Cookie == "" {
-			log.Fatal("Cookie is not provided")
+		if Cookie == "" {
+			log.Fatal("Cookie (auth) is not provided")
+		}
+
+		if UA == "" {
+			log.Fatal("User-agent (ua) was not provided")
 		}
 
 		Progress = pb.StartNew(Credit)
@@ -58,9 +74,10 @@ func main() {
 		Tracker = make(map[*Thread]int)
 
 		Headers = http.Header{
-			"User-Agent": {UA},
-			"Accept":     {"application/json, text/javascript, */*; q=0.01"},
-			"Cookie":     {Cookie},
+			"User-Agent":   {UA},
+			"Accept":       {"application/json, text/javascript, */*; q=0.01"},
+			"Content-Type": {"application/x-www-form-urlencoded"},
+			"Cookie":       {Cookie},
 		}
 
 		loadCache()

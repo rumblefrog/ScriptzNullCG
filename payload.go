@@ -2,7 +2,6 @@ package main
 
 import (
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -10,12 +9,12 @@ import (
 
 // Client - HTTP client for sending payload
 var Client = &http.Client{
-	Timeout: 30000000000,
+	Timeout: 60000000000,
 }
 
 // CreatePayload - Constructs payload for POST form query
 func CreatePayload(t *Thread, r *Reply) bool {
-	if r.Liked {
+	if r.Liked || len(r.Content) <= 20 || len(t.XFToken) == 0 {
 		return false
 	}
 
@@ -25,8 +24,6 @@ func CreatePayload(t *Thread, r *Reply) bool {
 	form.Add("_xfResponseType", "json")
 
 	request, err := http.NewRequest("POST", Target+r.LikeHref, strings.NewReader(form.Encode()))
-
-	log.Println("To " + Target + r.LikeHref)
 
 	request.Header = Headers
 
@@ -42,7 +39,5 @@ func CreatePayload(t *Thread, r *Reply) bool {
 
 	body, _ := ioutil.ReadAll(res.Body)
 
-	log.Println(string(body))
-
-	return true
+	return IsJSON(string(body))
 }

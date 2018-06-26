@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
@@ -24,4 +25,10 @@ func formatTarget(s *Section, t *Thread) string {
 	}
 
 	return fmt.Sprintf("%s%spage-%d", Target, t.Href, t.Page)
+}
+
+// IsJSON - Checks if string is JSON
+func IsJSON(str string) bool {
+	var js json.RawMessage
+	return json.Unmarshal([]byte(str), &js) == nil
 }

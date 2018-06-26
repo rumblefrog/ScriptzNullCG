@@ -21,7 +21,7 @@ type Thread struct {
 }
 
 func fetchThreads(s *Section) {
-	ThreadCollector.SetRequestTimeout(30000000000)
+	ThreadCollector.SetRequestTimeout(60000000000)
 	ThreadCollector.OnRequest(onRequest)
 	ThreadCollector.OnError(onError)
 
@@ -56,11 +56,9 @@ func fetchThreads(s *Section) {
 	})
 
 	ThreadCollector.OnScraped(func(r *colly.Response) {
-		log.Println(fmt.Sprintf("ThreadCollector: %d threads", len(s.Threads)))
+		log.Println(fmt.Sprintf("ThreadCollector: %s | %d threads", formatTarget(s, nil), len(s.Threads)))
 		fetchReply(s, s.Threads[ThreadIndex])
 	})
-
-	log.Println(formatTarget(s, nil))
 
 	ThreadCollector.Visit(formatTarget(s, nil))
 }
