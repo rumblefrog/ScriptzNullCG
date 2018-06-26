@@ -37,7 +37,7 @@ func fetchSections() {
 			return
 		}
 
-		sections = append(sections, &Section{
+		Sections = append(Sections, &Section{
 			Name:         e.ChildText("h3.nodeTitle > a[href]"),
 			Href:         e.ChildAttr("h3.nodeTitle > a[href]", "href"),
 			Page:         1,
@@ -48,7 +48,7 @@ func fetchSections() {
 	})
 
 	SectionCollector.OnScraped(func(r *colly.Response) {
-		fetchThreads(sections[0])
+		fetchThreads(Sections[0])
 	})
 
 	SectionCollector.Visit(formatTarget(nil, nil))

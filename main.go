@@ -9,13 +9,16 @@ import (
 	"github.com/urfave/cli"
 )
 
-// SectionCollector, ThreadCollector, ReplyCollector
+// Sections
+// SectionCollector - Forum Categories Collector
+// ThreadCollector - Threads Collector
+// ReplyCollector - Reply Collector
 var (
 	ua               = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36"
 	cookie           string
 	credit           uint64
 	client           = &http.Client{}
-	sections         []*Section
+	Sections         []*Section
 	SectionCollector = colly.NewCollector()
 	ThreadCollector  = colly.NewCollector()
 	ReplyCollector   = colly.NewCollector()
@@ -46,6 +49,8 @@ func main() {
 		if cookie = c.Args().Get(0); cookie == "" {
 			log.Fatal("Cookie is not provided")
 		}
+
+		Tracker = make(map[*Thread]int)
 
 		//fetchSections()
 		loadCache()

@@ -20,4 +20,8 @@ func fetchReply(s *Section, t *Thread) {
 			Date:   e.ChildText("a[href].datePermalink > span.DateTime"),
 		})
 	})
+
+	ReplyCollector.OnScraped(func(r *colly.Response) {
+		process(s, t)
+	})
 }

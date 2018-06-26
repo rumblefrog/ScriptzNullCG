@@ -52,7 +52,7 @@ func fetchThreads(s *Section) {
 	})
 
 	ThreadCollector.OnScraped(func(r *colly.Response) {
-		// fetchThreads(s.Threads[0])
+		fetchReply(s, s.Threads[ThreadIndex])
 	})
 
 	ThreadCollector.Visit(formatTarget(s, nil))
