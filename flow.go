@@ -1,6 +1,8 @@
 package main
 
-import "log"
+import (
+	"log"
+)
 
 // SectionIndex - Per Page of Threads Indexing
 // ThreadIndex - Per Section Page of Threads Indexing
@@ -31,6 +33,7 @@ func process(s *Section, t *Thread) {
 	Tracker[t] = index
 
 	if t.Page >= t.Pages {
+		addToCache(t)
 		if ThreadIndex < len(s.Threads) {
 			ThreadIndex++
 			fetchReply(s, s.Threads[ThreadIndex])

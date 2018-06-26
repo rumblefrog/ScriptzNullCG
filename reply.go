@@ -10,6 +10,11 @@ type Reply struct {
 }
 
 func fetchReply(s *Section, t *Thread) {
+	if isInCache(t) {
+		t.Page = t.Pages
+		process(s, t)
+	}
+
 	ReplyCollector.OnRequest(onRequest)
 	ReplyCollector.OnError(onError)
 
@@ -24,4 +29,6 @@ func fetchReply(s *Section, t *Thread) {
 	ReplyCollector.OnScraped(func(r *colly.Response) {
 		process(s, t)
 	})
+
+	ReplyCollector.Visit(formatTarget(s, t))
 }
