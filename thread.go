@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/gocolly/colly"
@@ -15,9 +17,11 @@ type Thread struct {
 	Page       uint64   `json:"page"`
 	Pages      uint64   `json:"pages"`
 	Replies    []*Reply `json:"replies"`
+	XFToken    string   `json:"xftoken"`
 }
 
 func fetchThreads(s *Section) {
+	ThreadCollector.SetRequestTimeout(30000000000)
 	ThreadCollector.OnRequest(onRequest)
 	ThreadCollector.OnError(onError)
 
@@ -37,13 +41,13 @@ func fetchThreads(s *Section) {
 			return
 		}
 
-		if ps, err = strconv.ParseUint(e.ChildText("div.main > div.titleText > div.secondRow > span.itemPageNav > a[href]:last-child"), 10, 64); err != nil {
-			return
+		if ps, err = strconv.ParseUint(e.ChildText("div.main > div.titleText > div.secondRow > div.posterDate > span.itemPageNav > a[href]:last-child"), 10, 64); err != nil {
+			ps = 1
 		}
 
 		s.Threads = append(s.Threads, &Thread{
-			Name:       e.ChildText("div.main > div.titleText > h3.title > a[href].PreviewToolTip"),
-			Href:       e.ChildAttr("div.main > div.titleText > h3.title > a[href].PreviewToolTip", "href"),
+			Name:       e.ChildText("div.main > div.titleText > h3.title > a[href].PreviewTooltip"),
+			Href:       e.ChildAttr("div.main > div.titleText > h3.title > a[href].PreviewTooltip", "href"),
 			ReplyCount: r,
 			Views:      v,
 			Page:       1,
@@ -52,8 +56,11 @@ func fetchThreads(s *Section) {
 	})
 
 	ThreadCollector.OnScraped(func(r *colly.Response) {
-		// fetchThreads(s.Threads[0])
+		log.Println(fmt.Sprintf("ThreadCollector: %d threads", len(s.Threads)))
+		fetchReply(s, s.Threads[ThreadIndex])
 	})
+
+	log.Println(formatTarget(s, nil))
 
 	ThreadCollector.Visit(formatTarget(s, nil))
 }

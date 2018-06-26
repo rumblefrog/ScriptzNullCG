@@ -13,8 +13,15 @@ func formatTarget(s *Section, t *Thread) string {
 	}
 
 	if s != nil && t == nil {
-		return fmt.Sprintf("%s%s", Target, s.Href)
+		if s.Page == 1 {
+			return fmt.Sprintf("%s%s", Target, s.Href)
+		}
+		return fmt.Sprintf("%s%spage-%d", Target, s.Href, s.Page)
 	}
 
-	return fmt.Sprintf("%s%s%spage-%d", Target, s.Href, t.Href, t.Page)
+	if t.Page == 1 {
+		return fmt.Sprintf("%s%s", Target, t.Href)
+	}
+
+	return fmt.Sprintf("%s%spage-%d", Target, t.Href, t.Page)
 }
