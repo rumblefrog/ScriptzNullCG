@@ -49,7 +49,7 @@ func fetchSections() {
 	})
 
 	SectionCollector.OnScraped(func(r *colly.Response) {
-		fetchThreads(Sections[0])
+		fetchThreads(Sections[1])
 	})
 
 	SectionCollector.Visit(formatTarget(nil, nil))

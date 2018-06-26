@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 )
 
 // SectionIndex - Per Page of Threads Indexing
 // ThreadIndex - Per Section Page of Threads Indexing
 var (
-	SectionIndex int
+	SectionIndex = 1 // Skip Announcements and start with General Discussion
 	ThreadIndex  int
 )
 
@@ -28,7 +27,6 @@ func process(s *Section, t *Thread) {
 
 	for ; index < len(t.Replies); index++ {
 		if t.Replies[index].Liked == false && len(t.Replies[index].Content) > 20 && CreatePayload(t, t.Replies[index]) {
-			log.Println(fmt.Sprintf("Index: %d", index))
 			if Credit <= 0 {
 				saveCache()
 
