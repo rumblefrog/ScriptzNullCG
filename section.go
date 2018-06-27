@@ -28,7 +28,7 @@ var (
 func fetchSections() {
 	SectionCollector := colly.NewCollector()
 
-	SectionCollector.SetRequestTimeout(time.Second * 30)
+	SectionCollector.SetRequestTimeout(time.Second * 60)
 	SectionCollector.OnRequest(onRequest)
 	SectionCollector.OnError(onError)
 

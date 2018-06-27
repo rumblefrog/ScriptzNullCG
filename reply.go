@@ -25,7 +25,7 @@ func fetchReply(s *Section, t *Thread) {
 
 	ReplyCollector := colly.NewCollector()
 
-	ReplyCollector.SetRequestTimeout(time.Second * 30)
+	ReplyCollector.SetRequestTimeout(time.Second * 60)
 	ReplyCollector.OnRequest(onRequest)
 	ReplyCollector.OnError(onError)
 

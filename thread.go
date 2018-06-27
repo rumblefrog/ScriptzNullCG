@@ -23,7 +23,7 @@ type Thread struct {
 func fetchThreads(s *Section) {
 	ThreadCollector := colly.NewCollector()
 
-	ThreadCollector.SetRequestTimeout(time.Second * 30)
+	ThreadCollector.SetRequestTimeout(time.Second * 60)
 	ThreadCollector.OnRequest(onRequest)
 	ThreadCollector.OnError(onError)
 
