@@ -100,6 +100,7 @@ func onRequest(r *colly.Request) {
 }
 
 func onError(r *colly.Response, e error) {
+	saveCache()
 	log.Fatal("Try a fresh token perhaps?: ", e)
 }
 
