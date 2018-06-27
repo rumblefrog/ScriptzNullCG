@@ -52,6 +52,7 @@ func fetchSections() {
 	})
 
 	SectionCollector.OnScraped(func(r *colly.Response) {
+		Progress.Prefix("SectionCollector: Done")
 		fetchThreads(Sections[1])
 	})
 

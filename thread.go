@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"time"
 
@@ -59,7 +58,7 @@ func fetchThreads(s *Section) {
 	})
 
 	ThreadCollector.OnScraped(func(r *colly.Response) {
-		log.Println(fmt.Sprintf("ThreadCollector: %s nests %d threads", formatTarget(s, nil), len(s.Threads)))
+		Progress.Prefix(fmt.Sprintf("ThreadCollector: %s | %d threads", formatTarget(s, nil), len(s.Threads)))
 		fetchReply(s, s.Threads[ThreadTracker[s]])
 	})
 

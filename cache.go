@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -33,7 +34,7 @@ func loadCache() {
 	if len(byteValues) > 0 {
 		if err = json.Unmarshal(byteValues, &Cache); err != nil {
 			file.Close()
-			log.Println("Unable to parse cache: ", err)
+			Progress.Prefix(fmt.Sprintf("Unable to parse cache: %s", err))
 		}
 	}
 

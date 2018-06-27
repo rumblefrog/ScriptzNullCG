@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/gocolly/colly"
@@ -53,7 +52,7 @@ func fetchReply(s *Section, t *Thread) {
 	})
 
 	ReplyCollector.OnScraped(func(r *colly.Response) {
-		log.Println(fmt.Sprintf("ReplyCollector scanned %d replies", len(t.Replies)))
+		Progress.Prefix(fmt.Sprintf("ReplyCollector: %s", formatTarget(s, t)))
 		process(s, t)
 	})
 

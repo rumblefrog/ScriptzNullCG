@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -81,11 +82,7 @@ func main() {
 		loadCache()
 		fetchSections()
 
-		Cache = append(Cache, &Thread{
-			Name: "test",
-		})
-
-		saveCache()
+		Progress.Prefix(fmt.Sprintf("Starting Collectors @ %d", Credit))
 
 		return nil
 	}
@@ -106,6 +103,6 @@ func onError(r *colly.Response, e error) {
 	log.Fatal("Try a fresh token perhaps?: ", e)
 }
 
-func onResponse(r *colly.Response) {
-	log.Println(r.Body)
-}
+// func onResponse(r *colly.Response) {
+// 	log.Println(r.Body)
+// }
