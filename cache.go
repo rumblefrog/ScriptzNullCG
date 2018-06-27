@@ -23,7 +23,7 @@ func addToCache(t *Thread) {
 }
 
 func loadCache() {
-	file, err := os.OpenFile("cache.json", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	file, err := os.OpenFile("cache.json", os.O_RDONLY|os.O_CREATE, 0777)
 
 	if err != nil {
 		log.Fatal("Unable to load cache")
