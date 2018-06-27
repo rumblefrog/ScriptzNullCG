@@ -71,7 +71,8 @@ func main() {
 
 		Progress = pb.StartNew(Credit)
 
-		Tracker = make(map[*Thread]int)
+		ThreadTracker = make(map[*Section]int)
+		ReplyTracker = make(map[*Thread]int)
 
 		Headers = http.Header{
 			"User-Agent":   {UA},

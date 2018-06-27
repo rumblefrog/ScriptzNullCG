@@ -57,7 +57,8 @@ func fetchThreads(s *Section) {
 
 	ThreadCollector.OnScraped(func(r *colly.Response) {
 		log.Println(fmt.Sprintf("ThreadCollector: %s nests %d threads", formatTarget(s, nil), len(s.Threads)))
-		fetchReply(s, s.Threads[ThreadIndex])
+		log.Println("ThreadCollector calling fetchReply")
+		fetchReply(s, s.Threads[ThreadTracker[s]])
 	})
 
 	ThreadCollector.Visit(formatTarget(s, nil))

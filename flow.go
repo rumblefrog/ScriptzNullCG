@@ -9,22 +9,17 @@ import (
 )
 
 // SectionIndex - Per Page of Threads Indexing
-// ThreadIndex - Per Section Page of Threads Indexing
-var (
-	SectionIndex = 1 // Skip Announcements and start with General Discussion
-	ThreadIndex  int
-)
+var SectionIndex = 1 // Skip Announcements and start with General Discussion
 
-// Tracker - Keep track of index processing
-var Tracker map[*Thread]int
+// ThreadTracker - Keep track of thread processing
+var ThreadTracker map[*Section]int
+
+// ReplyTracker - Keep track of index processing
+var ReplyTracker map[*Thread]int
 
 func process(s *Section, t *Thread) {
 	// Process all replies, check if we have enough, if not, fetch more
-	index, ok := Tracker[t]
-
-	if ok == false {
-		Tracker[t] = 0
-	}
+	index := ReplyTracker[t]
 
 	for ; index < len(t.Replies); index++ {
 		log.Println(fmt.Sprintf("%s : %d", t.Name, index))
@@ -46,12 +41,17 @@ func process(s *Section, t *Thread) {
 		}
 	}
 
-	Tracker[t] = index
+	ReplyTracker[t] = index
+
+	ThreadIndex := ThreadTracker[s]
+
+	log.Println("Processed")
 
 	if t.Page >= t.Pages {
 		addToCache(t)
 		if ThreadIndex+1 < len(s.Threads) {
 			ThreadIndex++
+			log.Println(fmt.Sprintf("Fetching reply for %s %d", s.Threads[ThreadIndex].Name, ThreadIndex))
 			fetchReply(s, s.Threads[ThreadIndex])
 		} else {
 			if s.Page >= s.Pages {
@@ -65,6 +65,11 @@ func process(s *Section, t *Thread) {
 		}
 	} else {
 		t.Page++
+		log.Println(fmt.Sprintf("Fetching reply for %s page %d", t.Name, t.Page))
 		fetchReply(s, t)
 	}
+
+	log.Println("Storing back into ThreadTracker")
+
+	ThreadTracker[s] = ThreadIndex
 }
