@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -38,6 +39,8 @@ func CreatePayload(t *Thread, r *Reply) bool {
 	}
 
 	body, _ := ioutil.ReadAll(res.Body)
+
+	log.Println(r.ID)
 
 	return IsJSON(string(body))
 }

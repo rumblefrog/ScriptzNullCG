@@ -8,6 +8,7 @@ import (
 
 // Reply ...
 type Reply struct {
+	ID       string `json:"id"`
 	Author   string `json:"author"`
 	Content  string `json:"content"`
 	LikeHref string `json:"likehref"`
@@ -31,6 +32,7 @@ func fetchReply(s *Section, t *Thread) {
 		}
 
 		t.Replies = append(t.Replies, &Reply{
+			ID:       e.Attr("id"),
 			Author:   e.Attr("data-author"),
 			Content:  e.ChildText("article > blockquote.messageText"),
 			LikeHref: e.ChildAttr("a[href].LikeLinkHide", "href"),

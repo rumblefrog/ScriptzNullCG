@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 )
 
@@ -26,6 +27,7 @@ func process(s *Section, t *Thread) {
 	}
 
 	for ; index < len(t.Replies); index++ {
+		log.Println(fmt.Sprintf("%s : %d", t.Name, index))
 		if len(t.Replies[index].Content) > 20 && CreatePayload(t, t.Replies[index]) {
 			if Credit <= 0 {
 				saveCache()
