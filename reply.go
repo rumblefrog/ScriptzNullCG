@@ -17,12 +17,6 @@ type Reply struct {
 }
 
 func fetchReply(s *Section, t *Thread) {
-	if isInCache(t) {
-		t.Page = t.Pages
-		process(s, t)
-		return
-	}
-
 	ReplyCollector := colly.NewCollector()
 
 	ReplyCollector.SetRequestTimeout(time.Second * 60)

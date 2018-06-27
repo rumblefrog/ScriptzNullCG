@@ -11,9 +11,9 @@ import (
 // Cache for thread history
 var Cache []*Thread
 
-func isInCache(t *Thread) bool {
+func isInCache(name, href string) bool {
 	for _, v := range Cache {
-		return t.Name == v.Name && t.Href == v.Href
+		return name == v.Name && href == v.Href
 	}
 	return false
 }

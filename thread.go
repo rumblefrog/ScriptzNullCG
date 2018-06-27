@@ -47,6 +47,13 @@ func fetchThreads(s *Section) {
 			ps = 1
 		}
 
+		if isInCache(
+			e.ChildText("div.main > div.titleText > h3.title > a[href].PreviewTooltip"),
+			e.ChildAttr("div.main > div.titleText > h3.title > a[href].PreviewTooltip", "href"),
+		) {
+			return
+		}
+
 		s.Threads = append(s.Threads, &Thread{
 			Name:       e.ChildText("div.main > div.titleText > h3.title > a[href].PreviewTooltip"),
 			Href:       e.ChildAttr("div.main > div.titleText > h3.title > a[href].PreviewTooltip", "href"),
