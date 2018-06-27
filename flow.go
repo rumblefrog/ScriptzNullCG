@@ -45,17 +45,14 @@ func process(s *Section, t *Thread) {
 
 	ThreadIndex := ThreadTracker[s]
 
-	log.Println("Processed")
-
 	if t.Page >= t.Pages {
 		addToCache(t)
 		if ThreadIndex+1 < len(s.Threads) {
 			ThreadIndex++
-			log.Println(fmt.Sprintf("Fetching reply for %s %d", s.Threads[ThreadIndex].Name, ThreadIndex))
+			ThreadTracker[s] = ThreadIndex
 			fetchReply(s, s.Threads[ThreadIndex])
 		} else {
 			if s.Page >= s.Pages {
-				ThreadIndex = 0
 				SectionIndex++
 				fetchThreads(Sections[SectionIndex])
 			} else {
@@ -65,11 +62,6 @@ func process(s *Section, t *Thread) {
 		}
 	} else {
 		t.Page++
-		log.Println(fmt.Sprintf("Fetching reply for %s page %d", t.Name, t.Page))
 		fetchReply(s, t)
 	}
-
-	log.Println("Storing back into ThreadTracker")
-
-	ThreadTracker[s] = ThreadIndex
 }

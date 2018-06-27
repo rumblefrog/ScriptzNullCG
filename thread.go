@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/gocolly/colly"
 )
@@ -21,7 +22,9 @@ type Thread struct {
 }
 
 func fetchThreads(s *Section) {
-	ThreadCollector.SetRequestTimeout(60000000000)
+	ThreadCollector := colly.NewCollector()
+
+	ThreadCollector.SetRequestTimeout(time.Second * 30)
 	ThreadCollector.OnRequest(onRequest)
 	ThreadCollector.OnError(onError)
 
@@ -57,7 +60,6 @@ func fetchThreads(s *Section) {
 
 	ThreadCollector.OnScraped(func(r *colly.Response) {
 		log.Println(fmt.Sprintf("ThreadCollector: %s nests %d threads", formatTarget(s, nil), len(s.Threads)))
-		log.Println("ThreadCollector calling fetchReply")
 		fetchReply(s, s.Threads[ThreadTracker[s]])
 	})
 

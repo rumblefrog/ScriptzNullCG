@@ -3,6 +3,7 @@ package main
 import (
 	"math"
 	"strconv"
+	"time"
 
 	"github.com/gocolly/colly"
 )
@@ -25,7 +26,9 @@ var (
 )
 
 func fetchSections() {
-	SectionCollector.SetRequestTimeout(60000000000)
+	SectionCollector := colly.NewCollector()
+
+	SectionCollector.SetRequestTimeout(time.Second * 30)
 	SectionCollector.OnRequest(onRequest)
 	SectionCollector.OnError(onError)
 

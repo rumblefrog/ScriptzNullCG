@@ -21,16 +21,13 @@ import (
 // ThreadCollector - Threads collector
 // ReplyCollector - Reply collector
 var (
-	UA               = ""
-	Cookie           string
-	Credit           int
-	TotalProcessed   uint64
-	Progress         *pb.ProgressBar
-	Headers          http.Header
-	Sections         []*Section
-	SectionCollector = colly.NewCollector()
-	ThreadCollector  = colly.NewCollector()
-	ReplyCollector   = colly.NewCollector()
+	UA             = ""
+	Cookie         string
+	Credit         int
+	TotalProcessed uint64
+	Progress       *pb.ProgressBar
+	Headers        http.Header
+	Sections       []*Section
 )
 
 func main() {

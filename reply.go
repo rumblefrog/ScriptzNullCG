@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/gocolly/colly"
 )
@@ -18,12 +19,14 @@ type Reply struct {
 
 func fetchReply(s *Section, t *Thread) {
 	if isInCache(t) {
-		log.Println("Hit Cache")
 		t.Page = t.Pages
 		process(s, t)
+		return
 	}
 
-	ReplyCollector.SetRequestTimeout(60000000000)
+	ReplyCollector := colly.NewCollector()
+
+	ReplyCollector.SetRequestTimeout(time.Second * 30)
 	ReplyCollector.OnRequest(onRequest)
 	ReplyCollector.OnError(onError)
 
@@ -44,23 +47,15 @@ func fetchReply(s *Section, t *Thread) {
 				LikeHref: m.ChildAttr("a[href].LikeLinkHide", "href"),
 				Date:     m.ChildText("a[href].datePermalink > span.DateTime"),
 			})
-
-			log.Printf(fmt.Sprintf("Inserted %s into %s", m.Attr("id"), t.Name))
 		})
 
 		t.XFToken = e.ChildAttr("input[name=_xfToken]:first-of-type", "value")
 	})
 
 	ReplyCollector.OnScraped(func(r *colly.Response) {
-		log.Print("Memory: ")
-		log.Println(t.Replies)
-		for _, v := range t.Replies {
-			log.Println("Loop: " + v.ID)
-		}
+		log.Println(fmt.Sprintf("ReplyCollector scanned %d replies", len(t.Replies)))
 		process(s, t)
 	})
-
-	log.Println("ReplyCollector: " + formatTarget(s, t))
 
 	ReplyCollector.Visit(formatTarget(s, t))
 }
