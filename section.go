@@ -2,6 +2,7 @@ package main
 
 import (
 	"math"
+	"math/rand"
 	"strconv"
 	"time"
 
@@ -33,16 +34,6 @@ func fetchSections() {
 	SectionCollector.OnRequest(onRequest)
 	SectionCollector.OnError(onError)
 
-	Sections = append(Sections, &Section{
-		Name:         "New Posts",
-		Href:         "find-new/posts",
-		Page:         1,
-		Pages:        10,
-		ThreadCount:  200,
-		MessageCount: 0,
-		Search:       true,
-	})
-
 	SectionCollector.OnHTML("li.node > div.nodeInfo > div.nodeText", func(e *colly.HTMLElement) {
 		if tc, err = strconv.ParseUint(e.ChildText("div.nodeStats > dl:first-child > dd"), 10, 64); err != nil {
 			return
@@ -68,6 +59,20 @@ func fetchSections() {
 	})
 
 	SectionCollector.OnScraped(func(r *colly.Response) {
+		rand.Seed(time.Now().UnixNano())
+		rand.Shuffle(len(Sections), func(i, j int) { Sections[i], Sections[j] = Sections[j], Sections[i] })
+
+		Sections = append(Sections, Sections[0])
+		Sections[0] = &Section{
+			Name:         "New Posts",
+			Href:         "find-new/posts",
+			Page:         1,
+			Pages:        10,
+			ThreadCount:  200,
+			MessageCount: 0,
+			Search:       true,
+		}
+
 		Progress.Prefix("SectionCollector: Done")
 		fetchThreads(Sections[0])
 	})
