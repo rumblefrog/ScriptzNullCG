@@ -59,11 +59,8 @@ func fetchSections() {
 	})
 
 	SectionCollector.OnScraped(func(r *colly.Response) {
-		rand.Seed(time.Now().UnixNano())
-		rand.Shuffle(len(Sections), func(i, j int) { Sections[i], Sections[j] = Sections[j], Sections[i] })
-
-		Sections = append(Sections, Sections[0])
-		Sections[0] = &Section{
+		// Neat bonus, for fresh content
+		Sections = append(Sections, &Section{
 			Name:         "New Posts",
 			Href:         "find-new/posts",
 			Page:         1,
@@ -71,7 +68,10 @@ func fetchSections() {
 			ThreadCount:  200,
 			MessageCount: 0,
 			Search:       true,
-		}
+		})
+
+		rand.Seed(time.Now().UnixNano())
+		rand.Shuffle(len(Sections), func(i, j int) { Sections[i], Sections[j] = Sections[j], Sections[i] })
 
 		Progress.Prefix("SectionCollector: Done")
 
