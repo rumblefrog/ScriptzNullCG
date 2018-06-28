@@ -17,6 +17,7 @@ type Section struct {
 	Threads      []*Thread `json:"threads"`
 	ThreadCount  uint64    `json:"threadcount"`
 	MessageCount uint64    `json:"messagecount"`
+	Search       bool
 }
 
 var (
@@ -32,12 +33,26 @@ func fetchSections() {
 	SectionCollector.OnRequest(onRequest)
 	SectionCollector.OnError(onError)
 
+	Sections = append(Sections, &Section{
+		Name:         "New Posts",
+		Href:         "find-new/posts",
+		Page:         1,
+		Pages:        10,
+		ThreadCount:  200,
+		MessageCount: 0,
+		Search:       true,
+	})
+
 	SectionCollector.OnHTML("li.node > div.nodeInfo > div.nodeText", func(e *colly.HTMLElement) {
 		if tc, err = strconv.ParseUint(e.ChildText("div.nodeStats > dl:first-child > dd"), 10, 64); err != nil {
 			return
 		}
 
 		if mc, err = strconv.ParseUint(e.ChildText("div.nodeStats > dl:last-child > dd"), 10, 64); err != nil {
+			return
+		}
+
+		if e.ChildText("h3.nodeTitle > a[href]") == "Announcements" {
 			return
 		}
 
@@ -48,12 +63,13 @@ func fetchSections() {
 			Pages:        uint64(math.Ceil(float64(tc) / float64(20))),
 			ThreadCount:  tc,
 			MessageCount: mc,
+			Search:       false,
 		})
 	})
 
 	SectionCollector.OnScraped(func(r *colly.Response) {
 		Progress.Prefix("SectionCollector: Done")
-		fetchThreads(Sections[1])
+		fetchThreads(Sections[0])
 	})
 
 	SectionCollector.Visit(formatTarget(nil, nil))

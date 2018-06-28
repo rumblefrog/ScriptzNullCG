@@ -8,7 +8,7 @@ import (
 )
 
 // SectionIndex - Per Page of Threads Indexing
-var SectionIndex = 1 // Skip Announcements and start with General Discussion
+var SectionIndex int
 
 // ThreadTracker - Keep track of thread processing
 var ThreadTracker map[*Section]int

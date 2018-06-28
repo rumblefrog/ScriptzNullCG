@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gocolly/colly"
 	"github.com/urfave/cli"
@@ -102,6 +103,14 @@ func onRequest(r *colly.Request) {
 func onError(r *colly.Response, e error) {
 	saveCache()
 	log.Fatal("Try a fresh token perhaps?: ", e)
+}
+
+func onRedirect(req *http.Request, via []*http.Request) error {
+	if strings.Contains(req.URL.String(), "find-new") {
+		Sections[0].Href = req.URL.Path[1:]
+	}
+
+	return nil
 }
 
 // func onResponse(r *colly.Response) {

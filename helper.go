@@ -14,6 +14,9 @@ func formatTarget(s *Section, t *Thread) string {
 	}
 
 	if s != nil && t == nil {
+		if s.Search && s.Page != 1 {
+			return fmt.Sprintf("%s%s?page=%d", Target, s.Href, s.Page)
+		}
 		if s.Page == 1 {
 			return fmt.Sprintf("%s%s", Target, s.Href)
 		}

@@ -27,6 +27,8 @@ func fetchThreads(s *Section) {
 	ThreadCollector.OnRequest(onRequest)
 	ThreadCollector.OnError(onError)
 
+	ThreadCollector.RedirectHandler = onRedirect
+
 	var (
 		r   uint64
 		v   uint64
