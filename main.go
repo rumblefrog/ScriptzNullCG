@@ -23,6 +23,7 @@ import (
 // ThreadCollector - Threads collector
 // ReplyCollector - Reply collector
 var (
+	Multi          bool
 	UA             = ""
 	Cookie         string
 	Credit         int
@@ -56,6 +57,11 @@ func main() {
 			Value:       "",
 			Usage:       "The user-agent you authenticated with",
 			Destination: &UA,
+		},
+		cli.BoolFlag{
+			Name:        "multi",
+			Usage:       "Enable processing of multiple sections",
+			Destination: &Multi,
 		},
 	}
 
