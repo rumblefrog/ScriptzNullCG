@@ -75,13 +75,7 @@ func fetchSections() {
 
 		Progress.Prefix("SectionCollector: Done")
 
-		if Multi == true {
-			for _, v := range Sections {
-				go fetchThreads(v)
-			}
-		} else {
-			fetchThreads(Sections[0])
-		}
+		fetchThreads(Sections[0])
 	})
 
 	SectionCollector.Visit(formatTarget(nil, nil))
