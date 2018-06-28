@@ -66,7 +66,18 @@ func fetchThreads(s *Section) {
 
 	ThreadCollector.OnScraped(func(r *colly.Response) {
 		Progress.Prefix(fmt.Sprintf("ThreadCollector: %s | %d threads", formatTarget(s, nil), len(s.Threads)))
-		fetchReply(s, s.Threads[ThreadTracker[s]])
+
+		if len(s.Threads) == 0 {
+			if s.Page >= s.Pages {
+				SectionIndex++
+				fetchThreads(Sections[SectionIndex])
+			} else {
+				s.Page++
+				fetchThreads(s)
+			}
+		} else {
+			fetchReply(s, s.Threads[ThreadTracker[s]])
+		}
 	})
 
 	ThreadCollector.Visit(formatTarget(s, nil))

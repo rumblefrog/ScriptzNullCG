@@ -44,7 +44,7 @@ func process(s *Section, t *Thread) {
 	ThreadIndex := ThreadTracker[s]
 
 	if t.Page >= t.Pages {
-		addToCache(t)
+		go addToCache(t)
 		if ThreadIndex+1 < len(s.Threads) {
 			ThreadIndex++
 			ThreadTracker[s] = ThreadIndex
