@@ -5,11 +5,12 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 // Client - HTTP client for sending payload
 var Client = &http.Client{
-	Timeout: 60000000000,
+	Timeout: time.Second * 60,
 }
 
 // CreatePayload - Constructs payload for POST form query
